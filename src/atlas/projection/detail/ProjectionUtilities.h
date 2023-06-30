@@ -45,11 +45,10 @@ struct ProjectionUtilities {
 
         // Make point objects.
         const auto pointXYZ = PointXYZ(xyz);
-        auto pointLonLat    = PointLonLat();
 
         // Transform coordinates.
         auto r = radius != 0. ? radius : PointXYZ::norm(pointXYZ);
-        Sphere::convertCartesianToSpherical(r, pointXYZ, pointLonLat);
+        PointLonLat pointLonLat = from_pointlonlat(Sphere::convertCartesianToSpherical(r, pointXYZ));
 
         // Copy to array.
         lonlat[LON] = pointLonLat.lon();
@@ -72,13 +71,11 @@ struct ProjectionUtilities {
 
         const auto pointLonLat = PointLonLat(lonlat);
 
-        auto pointXYZ = PointXYZ();
-
         // Set Radius
         auto r = radius != 0 ? radius : util::Earth::radius();
 
         // Transform coordinates.
-        Sphere::convertSphericalToCartesian(r, pointLonLat, pointXYZ, 0.0);
+        auto pointXYZ = PointXYZ(Sphere::convertSphericalToCartesian(r, to_pointlonlat(pointLonLat), 0.0));
 
         if (debug) {
             Log::info() << "sphericalToCartesian:: pointLonLat pointXYZ = " << pointLonLat << " " << pointXYZ

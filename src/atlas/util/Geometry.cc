@@ -21,13 +21,13 @@ namespace geometry {
 namespace detail {
 void GeometrySphere::lonlat2xyz(const Point2& lonlat, Point3& xyz) const {
 #if ATLAS_ECKIT_VERSION_AT_LEAST(1, 24, 0)
-    Sphere::convertSphericalToCartesian(radius_, lonlat, xyz, 0., true);
+    xyz = Sphere::convertSphericalToCartesian(radius_, to_pointlonlat(lonlat), 0., true);
 #else
     Sphere::convertSphericalToCartesian(radius_, lonlat, xyz);
 #endif
 }
 void GeometrySphere::xyz2lonlat(const Point3& xyz, Point2& lonlat) const {
-    Sphere::convertCartesianToSpherical(radius_, xyz, lonlat);
+    lonlat = from_pointlonlat(Sphere::convertCartesianToSpherical(radius_, xyz));
 }
 
 } // namespace detail

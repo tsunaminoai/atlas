@@ -55,12 +55,12 @@ template <typename SphereT>
 class GeometrySphereT : public GeometryBase {
 public:
     void lonlat2xyz(const Point2& lonlat, Point3& xyz) const override {
-        SphereT::convertSphericalToCartesian(lonlat, xyz);
+        xyz = SphereT::convertSphericalToCartesian(to_pointlonlat(lonlat));
     }
     void xyz2lonlat(const Point3& xyz, Point2& lonlat) const override {
-        SphereT::convertCartesianToSpherical(xyz, lonlat);
+        lonlat =from_pointlonlat(SphereT::convertCartesianToSpherical(xyz));
     }
-    double distance(const Point2& p1, const Point2& p2) const override { return SphereT::distance(p1, p2); }
+    double distance(const Point2& p1, const Point2& p2) const override { return SphereT::distance(to_pointlonlat(p1), to_pointlonlat(p2)); }
     double distance(const Point3& p1, const Point3& p2) const override { return SphereT::distance(p1, p2); }
     double radius() const override { return SphereT::radius(); }
     double area() const override { return SphereT::area(); }
@@ -73,7 +73,7 @@ public:
     GeometrySphere(double radius): radius_(radius) {}
     void lonlat2xyz(const Point2& lonlat, Point3& xyz) const override;
     void xyz2lonlat(const Point3& xyz, Point2& lonlat) const override;
-    double distance(const Point2& p1, const Point2& p2) const override { return Sphere::distance(radius_, p1, p2); }
+    double distance(const Point2& p1, const Point2& p2) const override { return Sphere::distance(radius_, to_pointlonlat(p1), to_pointlonlat(p2)); }
     double distance(const Point3& p1, const Point3& p2) const override { return Sphere::distance(radius_, p1, p2); }
     double radius() const override { return radius_; }
     double area() const override { return Sphere::area(radius_); }
