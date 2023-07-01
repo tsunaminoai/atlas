@@ -51,7 +51,7 @@ SchmidtProjectionT<Rotation>::SchmidtProjectionT(const eckit::Parametrisation& p
 
     north0_ = {0.0, 0.0, 1.0};
 
-    atlas::util::UnitSphere::convertSphericalToCartesian(rotation_north_pole(rotation_), north1_);
+    north1_ = atlas::util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(rotation_north_pole(rotation_)));
     north1_ = PointXYZ::normalize(north1_);
 }
 
@@ -88,8 +88,7 @@ ProjectionImpl::Jacobian SchmidtProjectionT<Rotation>::jacobian(const PointLonLa
 
     lonlat2xy(xy);
 
-    PointXYZ xyz;
-    atlas::util::UnitSphere::convertSphericalToCartesian(lonlat, xyz);
+    PointXYZ xyz = atlas::util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(lonlat));
 
 
     double zomc2 = 1.0 - 1.0 / (c_ * c_);

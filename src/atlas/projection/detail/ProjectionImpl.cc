@@ -228,9 +228,7 @@ const ProjectionImpl* ProjectionImpl::create(const std::string& type, const ecki
 
 
 PointXYZ ProjectionImpl::xyz(const PointLonLat& lonlat) const {
-    atlas::PointXYZ xyz;
-    atlas::util::Earth::convertSphericalToCartesian(lonlat, xyz);
-    return xyz;
+    return atlas::util::Earth::convertSphericalToCartesian(to_pointlonlat(lonlat));
 }
 
 RectangularLonLatDomain ProjectionImpl::lonlatBoundingBox(const Domain& domain) const {

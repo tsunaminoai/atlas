@@ -86,15 +86,13 @@ void UnstructuredBilinearLonLat::do_setup(const FunctionSpace& source, const Fun
     target_ = target;
 
     ATLAS_TRACE_SCOPE("Setup target") {
-
         auto create_xyz = [](Field lonlat_field) {
             auto xyz_field = Field("xyz", array::make_datatype<double>(), array::make_shape(lonlat_field.shape(0), 3));
             auto lonlat    = array::make_view<double, 2>(lonlat_field);
             auto xyz       = array::make_view<double, 2>(xyz_field);
             PointXYZ p2;
             for (idx_t n = 0; n < lonlat.shape(0); ++n) {
-                const PointLonLat p1(lonlat(n, 0), lonlat(n, 1));
-                util::Earth::convertSphericalToCartesian(p1, p2);
+                p2        = util::Earth::convertSphericalToCartesian(to_pointlonlat({lonlat(n, 0), lonlat(n, 1)}));
                 xyz(n, 0) = p2.x();
                 xyz(n, 1) = p2.y();
                 xyz(n, 2) = p2.z();
@@ -106,10 +104,10 @@ void UnstructuredBilinearLonLat::do_setup(const FunctionSpace& source, const Fun
         target_lonlat_ = target.lonlat();
         if (functionspace::NodeColumns tgt = target) {
             auto meshTarget = tgt.mesh();
-            target_xyz_    = mesh::actions::BuildXYZField("xyz")(meshTarget);
+            target_xyz_     = mesh::actions::BuildXYZField("xyz")(meshTarget);
         }
         else {
-            target_xyz_    = create_xyz(target_lonlat_);
+            target_xyz_ = create_xyz(target_lonlat_);
         }
     }
 
@@ -326,11 +324,17 @@ Method::Triplets UnstructuredBilinearLonLat::projectPointToElements(size_t ip, c
     PointLonLat o_loc{o_lon, (*olonlat_)(ip, LAT)};  // lookup point
 
     auto inv_dist_weight_quad = [](element::Quad2D& q, const PointXY& loc, std::array<double, 4>& w) {
+        auto p0 = to_pointlonlat(PointLonLat{q.p(0).data()});
+        auto p1 = to_pointlonlat(PointLonLat{q.p(1).data()});
+        auto p2 = to_pointlonlat(PointLonLat{q.p(2).data()});
+        auto p3 = to_pointlonlat(PointLonLat{q.p(3).data()});
+        auto l  = to_pointlonlat(PointLonLat{loc.x(), loc.y()});
+
         double d[4];
-        d[0] = util::Earth::distance({q.p(0).data()}, loc);
-        d[1] = util::Earth::distance({q.p(1).data()}, loc);
-        d[2] = util::Earth::distance({q.p(2).data()}, loc);
-        d[3] = util::Earth::distance({q.p(3).data()}, loc);
+        d[0] = util::Earth::distance(p0, l);
+        d[1] = util::Earth::distance(p1, l);
+        d[2] = util::Earth::distance(p2, l);
+        d[3] = util::Earth::distance(p3, l);
         w[0] = d[1] * d[2] * d[3];
         w[1] = d[0] * d[2] * d[3];
         w[2] = d[1] * d[0] * d[3];
@@ -342,10 +346,15 @@ Method::Triplets UnstructuredBilinearLonLat::projectPointToElements(size_t ip, c
         }
     };
     auto inv_dist_weight_triag = [](element::Triag2D& q, const PointXY& loc, std::array<double, 4>& w) {
+        auto p0 = to_pointlonlat(PointLonLat{q.p(0).data()});
+        auto p1 = to_pointlonlat(PointLonLat{q.p(1).data()});
+        auto p2 = to_pointlonlat(PointLonLat{q.p(2).data()});
+        auto l  = to_pointlonlat(PointLonLat{loc.x(), loc.y()});
+
         double d[3];
-        d[0] = util::Earth::distance({q.p(0).data()}, loc);
-        d[1] = util::Earth::distance({q.p(1).data()}, loc);
-        d[2] = util::Earth::distance({q.p(2).data()}, loc);
+        d[0] = util::Earth::distance(p0, l);
+        d[1] = util::Earth::distance(p1, l);
+        d[2] = util::Earth::distance(p2, l);
         w[0] = d[1] * d[2];
         w[1] = d[0] * d[2];
         w[2] = d[1] * d[0];

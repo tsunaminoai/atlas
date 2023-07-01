@@ -177,12 +177,10 @@ void Rotation::rotate(double crd[]) const {
 
     if (!rotation_angle_only_) {
         const PointLonLat L(wrap_latitude({crd[LON], crd[LAT]}));
-        PointXYZ P;
-        UnitSphere::convertSphericalToCartesian(L, P);
+        PointXYZ P = UnitSphere::convertSphericalToCartesian(to_pointlonlat(L));
 
         const PointXYZ Pt = rotate_geocentric(P, rotate_);
-        PointLonLat Lt;
-        UnitSphere::convertCartesianToSpherical(Pt, Lt);
+        PointLonLat Lt    = from_pointlonlat(UnitSphere::convertCartesianToSpherical(Pt));
 
         crd[LON] = Lt.lon();
         crd[LAT] = Lt.lat();
@@ -196,12 +194,10 @@ void Rotation::unrotate(double crd[]) const {
 
     if (!rotation_angle_only_) {
         const PointLonLat Lt(crd);
-        PointXYZ Pt;
-        UnitSphere::convertSphericalToCartesian(Lt, Pt);
+        PointXYZ Pt = UnitSphere::convertSphericalToCartesian(to_pointlonlat(Lt));
 
         const PointXYZ P = rotate_geocentric(Pt, unrotate_);
-        PointLonLat L;
-        UnitSphere::convertCartesianToSpherical(P, L);
+        PointLonLat L    = from_pointlonlat(UnitSphere::convertCartesianToSpherical(P));
 
         crd[LON] = L.lon();
         crd[LAT] = L.lat();

@@ -66,16 +66,15 @@ void ExtendNodesGlobal::operator()(const Grid& grid, Mesh& mesh) const {
     array::ArrayView<double, 2> xy     = array::make_view<double, 2>(nodes.xy());
     array::ArrayView<double, 2> lonlat = array::make_view<double, 2>(nodes.lonlat());
     array::ArrayView<gidx_t, 1> gidx   = array::make_view<gidx_t, 1>(nodes.global_index());
-    array::ArrayView<int, 1>    ghost  = array::make_view<int, 1>(nodes.ghost());
-    array::ArrayView<int, 1>    partition = array::make_view<int, 1>(nodes.partition());
-    array::ArrayView<int, 1>    flags  = array::make_view<int, 1>(nodes.flags());
+    array::ArrayView<int, 1> ghost     = array::make_view<int, 1>(nodes.ghost());
+    array::ArrayView<int, 1> partition = array::make_view<int, 1>(nodes.partition());
+    array::ArrayView<int, 1> flags     = array::make_view<int, 1>(nodes.flags());
 
     for (idx_t i = 0; i < nb_extension_pts; ++i) {
         const idx_t n         = nb_real_pts + i;
         const PointLonLat pLL = grid.projection().lonlat(extended_pts[i]);
 
-        PointXYZ pXYZ;
-        util::Earth::convertSphericalToCartesian(pLL, pXYZ);
+        PointXYZ pXYZ = util::Earth::convertSphericalToCartesian(to_pointlonlat(pLL));
 
         xyz(n, XX)     = pXYZ.x();
         xyz(n, YY)     = pXYZ.y();

@@ -50,9 +50,12 @@ void tri_quality(double& eta, double& rho, const PointLonLat& p1, const PointLon
     // see
     // http://www.gidhome.com/component/manual/referencemanual/preprocessing/mesh_menu/mesh_quality
 
-    double l12 = util::Constants::radiansToDegrees() * util::Earth::centralAngle(p1, p2);
-    double l23 = util::Constants::radiansToDegrees() * util::Earth::centralAngle(p2, p3);
-    double l31 = util::Constants::radiansToDegrees() * util::Earth::centralAngle(p3, p1);
+    double l12 =
+        util::Constants::radiansToDegrees() * util::Earth::centralAngle(to_pointlonlat(p1), to_pointlonlat(p2));
+    double l23 =
+        util::Constants::radiansToDegrees() * util::Earth::centralAngle(to_pointlonlat(p2), to_pointlonlat(p3));
+    double l31 =
+        util::Constants::radiansToDegrees() * util::Earth::centralAngle(to_pointlonlat(p3), to_pointlonlat(p1));
 
     double s    = 0.5 * (l12 + l23 + l31);
     double area = std::sqrt(s * (s - l12) * (s - l23) * (s - l31));
@@ -69,11 +72,10 @@ void quad_quality(double& eta, double& rho, const PointLonLat& p1, const PointLo
                   const PointLonLat& p4) {
     // see http://geuz.org/gmsh/doc/preprints/gmsh_quad_preprint.pdf
 
-    PointXYZ xyz[4];
-    util::UnitSphere::convertSphericalToCartesian(p1, xyz[0]);
-    util::UnitSphere::convertSphericalToCartesian(p2, xyz[1]);
-    util::UnitSphere::convertSphericalToCartesian(p3, xyz[2]);
-    util::UnitSphere::convertSphericalToCartesian(p4, xyz[3]);
+    PointXYZ xyz[]{util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(p1)),
+                   util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(p2)),
+                   util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(p3)),
+                   util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(p4))};
 
     PointXYZ l2m1(PointXYZ::sub(xyz[1], xyz[0]));
     PointXYZ l3m2(PointXYZ::sub(xyz[2], xyz[1]));
@@ -101,10 +103,10 @@ void quad_quality(double& eta, double& rho, const PointLonLat& p1, const PointLo
 
     eta = std::max(1. - M_2_PI * max_inner, 0.);
 
-    double l12 = util::Earth::centralAngle(p1, p2);
-    double l23 = util::Earth::centralAngle(p2, p3);
-    double l34 = util::Earth::centralAngle(p3, p4);
-    double l41 = util::Earth::centralAngle(p4, p1);
+    double l12 = util::Earth::centralAngle(to_pointlonlat(p1), to_pointlonlat(p2));
+    double l23 = util::Earth::centralAngle(to_pointlonlat(p2), to_pointlonlat(p3));
+    double l34 = util::Earth::centralAngle(to_pointlonlat(p3), to_pointlonlat(p4));
+    double l41 = util::Earth::centralAngle(to_pointlonlat(p4), to_pointlonlat(p1));
 
     double min_length = std::min(std::min(std::min(l12, l23), l34), l41);
     double max_length = std::max(std::max(std::max(l12, l23), l34), l41);
@@ -132,7 +134,7 @@ void build_statistics(Mesh& mesh) {
             int ip2 = edge_nodes(jedge, 1);
             PointLonLat p1(lonlat(ip1, LON), lonlat(ip1, LAT));
             PointLonLat p2(lonlat(ip2, LON), lonlat(ip2, LAT));
-            dist(jedge) = util::Earth::distance(p1, p2) * 1e-3;
+            dist(jedge) = util::Earth::distance(to_pointlonlat(p1), to_pointlonlat(p2)) * 1e-3;
         }
     }
 

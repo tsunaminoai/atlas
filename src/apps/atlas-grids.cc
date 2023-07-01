@@ -405,8 +405,8 @@ int AtlasGrids::execute(const Args& args) {
             auto check_lonlat = [&](const std::string& key, std::function<PointLonLat()>&& get_lonlat) {
                 std::vector<double> lonlat_config;
                 if (config_check.get(key, lonlat_config)) {
-                    PointLonLat lonlat_check = {lonlat_config.data()};
-                    PointLonLat lonlat       = get_lonlat();
+                    PointLonLat lonlat_check{lonlat_config.data()};
+                    PointLonLat lonlat = get_lonlat();
                     if (not point_equal_normalised(lonlat, lonlat_check)) {
                         out << std::setprecision(4) << std::fixed << "Check failed: " << key << " " << lonlat
                             << " expected to be " << lonlat_check;

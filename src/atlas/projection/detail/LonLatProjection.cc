@@ -131,7 +131,7 @@ RectangularLonLatDomain LonLatProjectionT<Rotation>::lonlatBoundingBox(const Dom
     if (!bounds.crossesDateLine()) {
         PointLonLat A{xy({180., -10.})};
         PointLonLat B{xy({180., 10.})};
-        eckit::geometry::GreatCircle DL(A, B);
+        eckit::geometry::GreatCircle DL(to_pointlonlat(A), to_pointlonlat(B));
 
         for (auto lon : {rect.xmin(), rect.xmax()}) {
             if (!bounds.crossesDateLine()) {

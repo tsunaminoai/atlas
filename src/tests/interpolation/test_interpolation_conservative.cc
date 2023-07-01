@@ -41,7 +41,7 @@ void do_remapping_test(Grid src_grid, Grid tgt_grid, std::function<double(const 
     std::string src_data_type = (src_cell_data ? "CellColumns(" : "NodeColumns(");
     std::string tgt_data_type = (tgt_cell_data ? "CellColumns(" : "NodeColumns(");
     Log::info() << "+-----------------------\n";
-    Log::info() << src_data_type << src_grid.name() << ") --> " << tgt_data_type << tgt_grid.name() <<")\n";
+    Log::info() << src_data_type << src_grid.name() << ") --> " << tgt_data_type << tgt_grid.name() << ")\n";
     Log::info() << "+-----------------------\n";
     Log::info().indent();
 
@@ -71,10 +71,9 @@ void do_remapping_test(Grid src_grid, Grid tgt_grid, std::function<double(const 
         // A bit of a hack here...
         ConservativeMethod& consMethod = dynamic_cast<ConservativeMethod&>(*conservative_interpolation.get());
         for (idx_t spt = 0; spt < src_vals.size(); ++spt) {
-            auto p = consMethod.src_points(spt);
-            PointLonLat pll;
-            eckit::geometry::Sphere::convertCartesianToSpherical(1., p, pll);
-            src_vals(spt) = func(pll);
+            auto p          = consMethod.src_points(spt);
+            PointLonLat pll = from_pointlonlat(eckit::geometry::Sphere::convertCartesianToSpherical(1., p));
+            src_vals(spt)   = func(pll);
         }
     }
 
@@ -200,9 +199,7 @@ CASE("test_interpolation_conservative") {
     }
 
     SECTION("vortex_rollup") {
-        auto func = [](const PointLonLat& p) {
-            return util::function::vortex_rollup(p[0], p[1], 0.5);
-        };
+        auto func = [](const PointLonLat& p) { return util::function::vortex_rollup(p[0], p[1], 0.5); };
         Statistics remap_stat_1;
         Statistics remap_stat_2;
 

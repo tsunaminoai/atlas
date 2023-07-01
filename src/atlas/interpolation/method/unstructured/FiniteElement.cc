@@ -89,16 +89,13 @@ void FiniteElement::do_setup(const FunctionSpace& source, const FunctionSpace& t
     target_ = target;
 
     ATLAS_TRACE_SCOPE("Setup target") {
-
-
         auto create_xyz = [](Field lonlat_field) {
             auto xyz_field = Field("xyz", array::make_datatype<double>(), array::make_shape(lonlat_field.shape(0), 3));
             auto lonlat    = array::make_view<double, 2>(lonlat_field);
             auto xyz       = array::make_view<double, 2>(xyz_field);
             PointXYZ p2;
             for (idx_t n = 0; n < lonlat.shape(0); ++n) {
-                const PointLonLat p1(lonlat(n, 0), lonlat(n, 1));
-                util::Earth::convertSphericalToCartesian(p1, p2);
+                p2        = util::Earth::convertSphericalToCartesian(to_pointlonlat({lonlat(n, 0), lonlat(n, 1)}));
                 xyz(n, 0) = p2.x();
                 xyz(n, 1) = p2.y();
                 xyz(n, 2) = p2.z();
@@ -110,10 +107,10 @@ void FiniteElement::do_setup(const FunctionSpace& source, const FunctionSpace& t
         target_lonlat_ = target.lonlat();
         if (functionspace::NodeColumns tgt = target) {
             auto meshTarget = tgt.mesh();
-            target_xyz_    = mesh::actions::BuildXYZField("xyz")(meshTarget);
+            target_xyz_     = mesh::actions::BuildXYZField("xyz")(meshTarget);
         }
         else {
-            target_xyz_    = create_xyz(target_lonlat_);
+            target_xyz_ = create_xyz(target_lonlat_);
         }
     }
 

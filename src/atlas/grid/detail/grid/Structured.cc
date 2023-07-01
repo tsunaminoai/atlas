@@ -632,11 +632,8 @@ void Structured::computeTruePeriodicity() {
     const PointLonLat Pllmin = projection().lonlat(PointXY(xmin_[j], y_[j]));
     const PointLonLat Pllmax = projection().lonlat(PointXY(xmax_[j], y_[j]));
 
-    Point3 Pxmin;
-    util::UnitSphere::convertSphericalToCartesian(Pllmin, Pxmin);
-
-    Point3 Pxmax;
-    util::UnitSphere::convertSphericalToCartesian(Pllmax, Pxmax);
+    Point3 Pxmin = util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(Pllmin));
+    Point3 Pxmax = util::UnitSphere::convertSphericalToCartesian(to_pointlonlat(Pllmax));
 
     periodic_x_ = points_equal(Pxmin, Pxmax);
 }
@@ -868,23 +865,23 @@ void atlas__grid__Structured__delete(Structured* This) {
 }
 
 const Structured* atlas__grid__regular__RegularGaussian(long N) {
-    std::string gridname = "F"+std::to_string(N);
+    std::string gridname = "F" + std::to_string(N);
     return atlas__grid__Structured(gridname.c_str());
 }
 const Structured* atlas__grid__regular__RegularLonLat(long nlon, long nlat) {
-    std::string gridname = "L"+std::to_string(nlon)+"x"+std::to_string(nlat);
+    std::string gridname = "L" + std::to_string(nlon) + "x" + std::to_string(nlat);
     return atlas__grid__Structured(gridname.c_str());
 }
 const Structured* atlas__grid__regular__ShiftedLonLat(long nlon, long nlat) {
-    std::string gridname = "S"+std::to_string(nlon)+"x"+std::to_string(nlat);
+    std::string gridname = "S" + std::to_string(nlon) + "x" + std::to_string(nlat);
     return atlas__grid__Structured(gridname.c_str());
 }
 const Structured* atlas__grid__regular__ShiftedLon(long nlon, long nlat) {
-    std::string gridname = "Slon"+std::to_string(nlon)+"x"+std::to_string(nlat);
+    std::string gridname = "Slon" + std::to_string(nlon) + "x" + std::to_string(nlat);
     return atlas__grid__Structured(gridname.c_str());
 }
 const Structured* atlas__grid__regular__ShiftedLat(long nlon, long nlat) {
-    std::string gridname = "Slat"+std::to_string(nlon)+"x"+std::to_string(nlat);
+    std::string gridname = "Slat" + std::to_string(nlon) + "x" + std::to_string(nlat);
     return atlas__grid__Structured(gridname.c_str());
 }
 

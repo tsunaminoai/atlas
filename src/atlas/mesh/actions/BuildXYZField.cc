@@ -44,8 +44,7 @@ Field& BuildXYZField::operator()(mesh::Nodes& nodes) const {
 
         PointXYZ p2;
         for (idx_t n = 0; n < nodes.size(); ++n) {
-            const PointLonLat p1(lonlat(n, 0), lonlat(n, 1));
-            util::Earth::convertSphericalToCartesian(p1, p2);
+            p2        = util::Earth::convertSphericalToCartesian(to_pointlonlat({lonlat(n, 0), lonlat(n, 1)}));
             xyz(n, 0) = p2.x();
             xyz(n, 1) = p2.y();
             xyz(n, 2) = p2.z();

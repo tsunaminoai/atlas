@@ -28,14 +28,12 @@ void PointLonLat::normalise(double west, double east) {
     lon() = normalize_between_west_and_east(lon());
 }
 
-eckit::geometry::PointLonLat create_pointlonlat(const Point2 &p)
-{
+::eckit::geometry::PointLonLat to_pointlonlat(const Point2& p) {
     return {p.X, p.Y};
 }
 
-atlas::Point2 from_pointlonlat(const PointLonLat &p)
-{
-    return {p.lon(), p.lat()};
+Point2 from_pointlonlat(const ::eckit::geometry::PointLonLat& p) {
+    return {p.lon, p.lat};
 }
 
 }  // namespace atlas

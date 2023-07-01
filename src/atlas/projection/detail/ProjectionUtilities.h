@@ -47,7 +47,7 @@ struct ProjectionUtilities {
         const auto pointXYZ = PointXYZ(xyz);
 
         // Transform coordinates.
-        auto r = radius != 0. ? radius : PointXYZ::norm(pointXYZ);
+        auto r                  = radius != 0. ? radius : PointXYZ::norm(pointXYZ);
         PointLonLat pointLonLat = from_pointlonlat(Sphere::convertCartesianToSpherical(r, pointXYZ));
 
         // Copy to array.
