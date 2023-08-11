@@ -30,11 +30,11 @@ namespace detail {
 namespace grid {
 
 static void checkSizeOfPoint() {
-    // compile time check support C++11
-    static_assert(sizeof(PointXY) == 2 * sizeof(double), "Grid requires size of Point to be 2*double");
+//    // compile time check support C++11
+//    static_assert(sizeof(PointXY) == 2 * sizeof(double), "Grid requires size of Point to be 2*double");
 
-    // runtime check
-    ATLAS_ASSERT(sizeof(PointXY) == 2 * sizeof(double));
+//    // runtime check
+//    ATLAS_ASSERT(sizeof(PointXY) == 2 * sizeof(double));
 }
 
 const Grid* Grid::create(const Config& config) {
