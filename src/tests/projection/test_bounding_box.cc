@@ -22,6 +22,7 @@
 #include "atlas/domain.h"
 #include "atlas/domain/detail/GlobalDomain.h"  // FIXME not included by atlas/domain.h
 #include "atlas/grid.h"
+#include "atlas/library/defines.h"
 #include "atlas/runtime/Log.h"
 #include "atlas/util/Point.h"
 #include "atlas/util/Rotation.h"
@@ -239,6 +240,35 @@ CASE("MIR-282") {
 
     Log::info().precision(old);
 }
+
+//-----------------------------------------------------------------------------
+
+
+#if ATLAS_HAVE_PROJ
+    CASE("MIR-636") {
+    auto old = Log::info().precision(16);
+
+
+    SECTION("polar stereographic covering North/South poles") {
+        Grid grid =
+            StructuredGrid(grid::LinearSpacing(-3757840.3724026307, 3412159.6275973693, 2),
+                           grid::LinearSpacing(-4230049.099532972, 2939950.900467028, 2),
+                           Projection{"proj", util::Config("proj",
+                                                           "+proj=stere +lat_ts=90.000000 +lat_0=90 +lon_0=-30.000000 "
+                                                           "+k_0=1 +x_0=0 +y_0=0 +R=6371229.000000")});
+
+        auto bbox = grid->lonlatBoundingBox();
+        Log::info() << bbox << std::endl;
+
+        EXPECT(bbox.containsNorthPole());
+        EXPECT(!bbox.containsSouthPole());
+    }
+
+
+    Log::info().precision(old);
+}
+#endif
+
 
 //-----------------------------------------------------------------------------
 
