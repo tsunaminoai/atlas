@@ -1,6 +1,6 @@
 dependencies: |
   ecmwf/ecbuild
   ecmwf/eckit
-  ecmwf/fckit
+  ecmwf/fckit@workaround/cce-15
 dependency_branch: develop
 parallelism_factor: 8
